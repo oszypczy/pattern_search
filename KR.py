@@ -24,6 +24,6 @@ def KRsearch(text, pattern):
             if text[i:i+k] == pattern:
                 indexes.append(i)
         if i < n-k:
-            hash_text = ((hash_text - ord(text[i])*power_mod[k-1])*p + ord(text[i+k])) % m # noqa 551
+            hash_text = ((hash_text - ord(text[i])*power_mod[k-1])*p + ord(text[i+k])) % m
             hash_text = (hash_text + m) % m
     return indexes

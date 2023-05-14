@@ -9,10 +9,7 @@ from KR import KRsearch
 def main():
     with open("pan-tadeusz-unix.txt", "r", encoding="utf-8") as file:
         text = file.read()
-    #save_search_graph(text, "joined_search_graph.png")
-    text = "ABC ABCDAB ABCDABCDABDE"
-    pattern = "ABCDABD"
-    result = kmp_search(text, pattern)
+    save_search_graph(text, "joined_search_time_graph.png")
 
 
 def save_search_graph(text, title):
@@ -44,6 +41,20 @@ def save_search_graph(text, title):
         gc.disable()
         start = time.process_time()
         for word in arr:
+            kmp_search(text, word)
+        stop = time.process_time()
+        if gc_old:
+            gc.enable()
+        y_kmp_axis.append(stop - start)
+
+    print("kmp done")
+
+    for data in x_axis:
+        arr = words[:data]
+        gc_old = gc.isenabled()
+        gc.disable()
+        start = time.process_time()
+        for word in arr:
             KRsearch(text, word)
         stop = time.process_time()
         if gc_old:
@@ -52,19 +63,6 @@ def save_search_graph(text, title):
 
     print("kr done")
 
-    for data in x_axis:
-        arr = words[:data]
-        gc_old = gc.isenabled()
-        gc.disable()
-        start = time.process_time()
-        for word in arr:
-            kmp_search(text, word)
-        stop = time.process_time()
-        if gc_old:
-            gc.enable()
-        y_kmp_axis.append(stop - start)
-
-    print("kmp done")
 
     plt.plot(x_axis, y_naive_axis, '-', label="Naive search")
     plt.plot(x_axis, y_kmp_axis, '-', label="KMP search")
