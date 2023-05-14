@@ -1,29 +1,37 @@
-def KRsearch(text, pattern):
-    """This implementation uses the ASCII values of the characters in the pattern and text strings
-    to calculate their hash values, and then compares these hash values to determine if there is
-    a match between the pattern and a substring of the text.
-    The power_mod list is used to efficiently compute the hash values for each substring,
-    and the p and m constants are used to reduce the likelihood of hash collisions."""
-    if len(pattern) == 0 or len(text) < len(pattern):
+def KRsearch(text, pattern, q=(2**60)-243):
+    m = len(pattern) # pattern length
+    n = len(text) # text length
+    d = 10 # optional to chose ?
+
+    p = 0 # hash for pattern
+    t = 0 # hash for text
+    h = 1
+    results = []
+    if(m>n):
         return []
-    p = 31
-    m = 10**9 + 9
-    n = len(text)
-    k = len(pattern)
-    power_mod = [1] * (n-k+1)
-    for i in range(1, n-k+1):
-        power_mod[i] = (power_mod[i-1]*p) % m
-    hash_pattern = 0
-    hash_text = 0
-    for i in range(k):
-        hash_pattern = (hash_pattern*p + ord(pattern[i])) % m
-        hash_text = (hash_text*p + ord(text[i])) % m
-    indexes = []
-    for i in range(n-k+1):
-        if hash_pattern == hash_text:
-            if text[i:i+k] == pattern:
-                indexes.append(i)
-        if i < n-k:
-            hash_text = ((hash_text - ord(text[i])*power_mod[k-1])*p + ord(text[i+k])) % m
-            hash_text = (hash_text + m) % m
-    return indexes
+    if (n>0 and m>0):
+        for i in range(m-1): # takjakby text hash -> sluzy do usuwania udzialu hashu przy przesuwaniu
+            h = (h*d) % q # d^(m-1)
+
+        # Calculate hash value for pattern and text
+        for i in range(m):
+            p = (d*p + ord(pattern[i])) % q # pattern hash - permament
+            t = (d*t + ord(text[i])) % q    # text hash
+
+        # Find the match
+        for i in range(n-m+1): # iterate for each 3 letters
+            if p == t: # character-matching condition
+                for j in range(m): # checking if letters are the same
+                    if text[i+j] != pattern[j]:
+                        break
+                # bo jesli kazda litera jest taka sama to podkoniec 'j' bedzie = (m-1)
+                j += 1 # check if end of pattern was reached
+                if j == m: # if so -> append
+                    results.append(i)
+
+            if i < n-m: # == if not last iteration
+                t = (d*(t-ord(text[i])*h) + ord(text[i+m])) % q # update text hash as we move the substrng
+        # usuwa udzial poprzedniego hasha    # ^kolejna litera
+                if t < 0:
+                    t = t+q
+    return results
