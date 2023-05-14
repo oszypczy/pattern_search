@@ -2,7 +2,7 @@ def KRsearch(text, pattern, q=(2**60)-243):
     m = len(pattern) # pattern length
     n = len(text) # text length
     d = 10 # optional to chose ?
-
+    #q = len(set(text))
     p = 0 # hash for pattern
     t = 0 # hash for text
     h = 1
