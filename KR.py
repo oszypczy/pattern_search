@@ -2,12 +2,14 @@ def KRsearch(text, pattern, q=(2**60)-243):
     m = len(pattern) # pattern length
     n = len(text) # text length
     d = 10 # optional to chose ?
-
+    #q = len(set(text))
     p = 0 # hash for pattern
     t = 0 # hash for text
     h = 1
     results = []
-    if (n>0 & m>0):
+    if(m>n):
+        return []
+    if (n>0 and m>0):
         for i in range(m-1): # takjakby text hash -> sluzy do usuwania udzialu hashu przy przesuwaniu
             h = (h*d) % q # d^(m-1)
 
